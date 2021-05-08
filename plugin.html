@@ -1,0 +1,46 @@
+<html>
+
+<head>
+    <title>Timezone Map Plugin</title>
+
+    <script src="jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="plugin/timezone-picker.css">
+    <script src="plugin/moment.js"></script>
+    <script src="plugin/moment-timezone-with-data-10-year-range.js"></script>
+    <script src="plugin/timezone-picker.min.js"></script>
+    <style>
+        .quick-link > span {
+            font-size: 16px !important;
+        }
+    </style>
+    <script>
+
+        $(document).ready(function () {
+            $('#map').timezonePicker({
+                showHoverText: false,
+                mapColor: '#BBB',
+                quickLink: [{
+                    "Highlight My Timezone (America/Vancouver)": "America/Vancouver"
+                }],
+                quickLinkClass: 'customQuickLinkClass'
+            })
+        });
+
+
+    </script>
+</head>
+
+<body>
+    <br>
+    <div style="margin: 10px" id="map"></div>
+    <br>
+    <div>
+        Click on the map to find the timezone at that location, or use the dropdown to find the inverse.
+    </div>
+    <br>
+    <div>
+        This demo is showcasing the Timezone-Picker jquery plugin. <a href="https://github.com/kevalbhatt/timezone-picker">Click here for source code and documentation.</a>
+    </div>
+</body>
+
+</html>

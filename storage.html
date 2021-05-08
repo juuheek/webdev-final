@@ -1,0 +1,114 @@
+<html>
+
+<head>
+    <title>localStorage Explained</title>
+    <script src="jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/spcss@0.7.0">
+    <script>
+        $(document).ready(function () {
+            
+            // get from localStorage
+            let color = window.localStorage.getItem('colorChoice');
+
+            let colors = ['Chartreuse', 'Coral', 'DarkBlue', 'DarkMagenta', 'DarkGreen', "DeepPink"];
+            var mySelect = $('#colorSelector');
+            colors.forEach(c => mySelect.append(`<option>${c}</option`));
+
+            mySelect.change(function(event) {
+                //update localStorage
+                window.localStorage.setItem('colorChoice', this.value);
+                $('#box').css('background-color', this.value)
+            })
+
+            if (color) {
+                $('#box').css('background-color', color)
+                mySelect.val(color);
+            } else {
+                $('#box').css('background-color', colors[0]);
+            }
+
+            $('#box').show();
+        })
+    </script>
+</head>
+
+<body>
+    <h1>Alright, listen up!</h1>
+
+    <p>What if you wanted to persist information so that it is available if the web page is closed and then opened again?
+    <p>
+
+    <p>Luckily, Web API's <code>window</code> interface provides with a convenient way to do that. The available storage
+        is browser-dependent, with Google Chrome and Mozilla Firefox offering up to 10 MB per origin.</p>
+
+    <h2>Introducing <code>localStorage</code>!</h2>
+
+    <figure>
+        <img src="images/storage.png" style="height: 250px">
+        <figcaption>Image Credit: <a
+                href="https://www.boldare.com/blog/everything-you-need-to-know-about-local-storage/">boldare.com</a>
+        </figcaption>
+    </figure>
+
+    <p>There are four main APIs:</p>
+    <ul>
+        <li>
+            <code>Storage.getItem()</code> When passed a key name, will return key's vaue.
+        </li>
+        <li>
+            <code>Storage.setItem()</code> When passed a key name and value, will add that key to the storage, or update
+            that key's value if it already exists.
+        </li>
+        <li>
+            <code>Storage.removeItem()</code> When passed a key name, will remove that key from the storage.
+        </li>
+        <li>
+            <code>Storage.clear()</code> When invoked, will empty all keys out of the storage.
+        </li>
+    </ul>
+
+    <div >
+    <h3>DEMO</h3>
+    <p>This page uses <code>localStorage</code> to store a color choice.</p>
+
+    <ol>
+        <li>
+            On page load the <code>Storage.getItem('colorChoice')</code> API is used.
+        </li>
+        <li>
+            When the color is set, the <code>Storage.setItem('colorChoice', <new color>)</code> API is used.
+        </li>
+    </ol>
+
+    <p>Use this dropdown to change what is being stored and then refresh the page. <b>Your choice will persist!</b></p>
+
+    <label for="cars">Pick a Color:</label>
+
+    <select id="colorSelector"></select>
+    <div id="box" style="margin:auto; width: 300px; height: 150px; display: none"></div>
+
+    </div>
+    <h3>Some Notes</h3>
+    <h4>
+        Common User Cases:
+    </h4>
+    <ul>
+        <li>
+            Storing <code>refresh tokens</code> for autnehtication using JWT's.
+        </li>
+        <li>
+            Interface preferences, such as Dark Mode, or language preference.
+        </li>
+    </ul>
+
+    <h4>
+        <code>localStorage</code> differs from:
+    </h4>
+    <ul>
+        <li><code>cookies</code> in that they are sent to the server, but local and session storage are not.</li>
+        <li><code>sessionStorage</code> in that it gets cleared after the browser tab is closed.</li>
+    </ul>
+
+</body>
+
+</html>

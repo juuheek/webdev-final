@@ -1,0 +1,262 @@
+<html>
+
+<head>
+    <title>COMP 2130 Assn 4</title>
+    <script src="jquery-3.6.0.min.js"></script>
+    <script src="index.js"></script>
+    <script>
+        var alien;
+        $(document).ready(function () {
+
+            $('#submitBtn').click(function () {
+                let command = $('#inputBox').val().toLowerCase();
+
+                switch (command) {
+                    case 'storage':
+                        createLinkTo('storage.html');
+                        break;
+                    case 'alien':
+                        if (!alien) {
+                            alien = new Alien();
+                        }
+                        break;
+                    case 'walk':
+                        if (alien) {
+                            alien.walk();
+                        }
+                        break;
+                    case 'run':
+                        if (alien) {
+                            alien.run();
+                        }
+                        break;
+                    case 'stop':
+                        if (alien) {
+                            alien.stopWalking();
+                        }
+                        break;
+                    case 'bye':
+                        if (alien) {
+                            alien.hide();
+                        }
+                        break;
+                    case 'jquery':
+                        createFourImagesWithJquery()
+                        break;
+                    case 'plugin':
+                        createLinkTo('plugin.html');
+                        break;
+                    case 'ajax':
+                        readTextFileAndDisplayContents();
+                        break;
+                    case 'alphabet':
+                        printAlphabet();
+                        break;
+                    default:
+                        break;
+                }
+            });
+        });
+
+        function createLinkTo(target) {
+            $(`<br><a href="${target}">${target}</a>`, {
+            })
+                .css('font-size', '16px')
+                .css('margin', 'auto')
+                .appendTo($('body'));
+        }
+
+        function printAlphabet() {
+
+            // loop from char code of z down to char code of a
+            for (let i = 'z'.charCodeAt(0); i >= 'a'.charCodeAt(0); i--) {
+                $('<img>', {
+                    src: `images/letters/${String.fromCharCode(i)}.png`,
+                    width: '40px',
+                    click: function () {
+                        // if any letter is clicked, change every letter to be like the letter clicked
+                        $('img').attr('src', `images/letters/${String.fromCharCode(i)}.png`)
+                    }
+                }).appendTo($('body'));
+            }
+        }
+
+        function createFourImagesWithJquery() {
+
+            let body = $('body');
+            let images = ['bird.jpg', 'cat.jpg', 'turtle.jpg', 'dog.jpg'];
+
+
+            // create using "plain-old" javascript
+            for (let imageSource of images) {
+                let img = document.createElement('img');
+                img.src = `images/${imageSource}`;
+                document.body.appendChild(img);
+            }
+
+            // set width fir all, and onclick for second image using jquery
+            $('img').css('width', '200px');
+
+            // 'img' matches all images, and eq(1) selects the second one (zero-based index)
+            $('img:eq(1)').click(function () {
+                $(this).css('border', '5px solid red');
+            })
+        }
+
+
+
+        function readTextFileAndDisplayContents() {
+            // init request
+            var xmlhttp = new XMLHttpRequest();
+
+            // add a callback
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4) {
+                    let textFromFile = xmlhttp.responseText;
+                    $('body').append(`<h1>${JSON.parse(textFromFile).join(' ').toUpperCase()}</h1>`);
+                }
+            };
+
+            // do the request
+            xmlhttp.open("GET", "./advice.txt", true);
+            xmlhttp.send();
+        }
+
+        const HORIZONTAL_SPEED = 1;
+        const WalkingDirection = {
+            NONE: 'none',
+            RIGHT: 'r',
+            LEFT: 'l'
+        }
+
+        class Alien {
+            constructor() {
+                $('body').append('    <img id="alien" src="images/alien/alienrwalk0.gif" style="position:absolute; left:100px; bottom:100px;">');
+                this.element = document.getElementById('alien')
+
+                this.positionLeft = parseInt(this.element.style.left);
+                this.positionBottom = parseInt(this.element.style.bottom);
+                this.stepNumber = 0;
+                this.walkingDirection = WalkingDirection.NONE;
+                this.previousWalkingDirection = WalkingDirection.RIGHT;
+
+                /* 
+                    setInterval changes context (what `this` refers to)
+                    the `bind` function sets the context
+                */
+                this.animator = setInterval(this.animate.bind(this), 20);
+            }
+
+            walkRight() {
+                if (this.walkingDirection != WalkingDirection.RIGHT) {
+                    this.walkingDirection = WalkingDirection.RIGHT;
+                    this.stepNumber = 0;
+                }
+            }
+
+            walkLeft() {
+                if (this.walkingDirection != WalkingDirection.LEFT) {
+                    this.walkingDirection = WalkingDirection.LEFT;
+                    this.stepNumber = 0;
+                }
+            }
+
+            walk() {
+                if (this.mover) {
+                    clearInterval(this.mover);
+                }
+                if (this.walkingDirection == WalkingDirection.NONE) {
+                    this.walkingDirection = this.previousWalkingDirection;
+                }
+                this.mover = setInterval(this.updatePosition.bind(this), 100);
+            }
+
+            run() {
+                if (this.mover) {
+                    clearInterval(this.mover);
+                }
+                if (this.walkingDirection == WalkingDirection.NONE) {
+                    this.walkingDirection = this.previousWalkingDirection;
+                }
+                this.mover = setInterval(this.updatePosition.bind(this), 10);
+            }
+
+            hide() {
+                // set display: none
+                $('#alien').hide();
+
+                // just in case remove it completelty so it can be reused
+                $('#alien').remove();
+                this.destroy();
+                alien = null;
+            }
+
+            destroy() {
+                if (this.mover) {
+                    clearInterval(this.mover);
+                }
+
+                if (this.animator) {
+                    clearInterval(this.animator);
+                }
+            }
+
+            stopWalking() {
+                this.previousWalkingDirection = this.walkingDirection;
+                this.walkingDirection = WalkingDirection.NONE;
+            }
+
+            updatePosition() {
+
+                /* Detect collisions with screen edges */
+                if (this.positionLeft <= 0) {
+                    this.walkRight();
+                } else if (this.positionLeft + this.element.width >= window.innerWidth) {
+                    this.walkLeft();
+                }
+
+                /* First, calculate the new positon based on what's happening */
+
+                switch (this.walkingDirection) {
+                    case WalkingDirection.RIGHT:
+                        this.positionLeft += HORIZONTAL_SPEED;
+                        break;
+                    case WalkingDirection.LEFT:
+                        this.positionLeft -= HORIZONTAL_SPEED;
+                        break;
+                    default: break;
+                }
+
+                /* Finally, update the position */
+                this.element.style.left = `${this.positionLeft}px`;
+                this.element.style.bottom = `${this.positionBottom}px`;
+            }
+
+            /* This function is responsible for animating the alien */
+            animate() {
+
+                /* Feet should only move when on the ground and walking */
+                if (this.walkingDirection != WalkingDirection.NONE) {
+
+                    this.stepNumber++;
+                    if (this.stepNumber > 30) this.stepNumber = 0;
+
+                    /* the filename contains both direction and step number */
+                    this.element.src = `images/alien/alien${this.walkingDirection}walk${this.stepNumber}.gif`;
+                }
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div style="display: grid; place-items: center; padding-top:100px">
+        <label for="inputBox">Enter Command</label>
+        <input type="text" id="inputBox">
+        <br>
+        <button id="submitBtn" type="submit">Submit</button>
+        <br>
+    </div>
+</body>
+
+</html>
