@@ -41,8 +41,16 @@
     <p>Luckily, Web API's <code>window</code> interface provides with a convenient way to do that. The available storage
         is browser-dependent, with Google Chrome and Mozilla Firefox offering up to 10 MB per origin.</p>
 
-    <h2>Introducing <code>localStorage</code>!</h2>
 
+
+  
+
+    <h2>Introducing <code>localStorage</code>!</h2>
+    <h4>
+        <code>localStorage</code> differs from:
+    </h4>
+
+    <code>sessionStorage</code> in that it gets cleared after the browser tab is closed. In other words, while session storage erases data stored at the end of a web page's session, local storage data will persist at the end of a web page's session. Therefore, if a browser displays the same website on multiple tabs or windows, data is stored in isolation on multiple session storage, and the stored data is destroyed when each tab or window closes. However, for local storage, data is shared between multiple tabs or windows, and data remains in the browser when tabs or windows are closed.
     <figure>
         <img src="images/storage.png" style="height: 250px">
         <figcaption>Image Credit: <a
@@ -53,17 +61,17 @@
     <p>There are four main APIs:</p>
     <ul>
         <li>
-            <code>Storage.getItem()</code> When passed a key name, will return key's vaue.
+            <code>localStorage.getItem()</code> When passed a key name, will return key's value.
         </li>
         <li>
-            <code>Storage.setItem()</code> When passed a key name and value, will add that key to the storage, or update
+            <code>localStorage.setItem()</code> When passed a key name and value, will add that key to the storage, or update
             that key's value if it already exists.
         </li>
         <li>
-            <code>Storage.removeItem()</code> When passed a key name, will remove that key from the storage.
+            <code>localStorage.removeItem()</code> When passed a key name, will remove that key from the storage.
         </li>
         <li>
-            <code>Storage.clear()</code> When invoked, will empty all keys out of the storage.
+            <code>localStorage.clear()</code> When invoked, will empty all keys out of the storage.
         </li>
     </ul>
 
@@ -101,13 +109,7 @@
         </li>
     </ul>
 
-    <h4>
-        <code>localStorage</code> differs from:
-    </h4>
-    <ul>
-        <li><code>cookies</code> in that they are sent to the server, but local and session storage are not.</li>
-        <li><code>sessionStorage</code> in that it gets cleared after the browser tab is closed.</li>
-    </ul>
+
 
 </body>
 
